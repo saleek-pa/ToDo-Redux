@@ -7,12 +7,10 @@ export const todoSlice = createSlice({
       {
         id: 1,
         title: "Task 1",
-        completed: false,
       },
       {
         id: 2,
         title: "Task 2",
-        completed: false,
       },
     ],
   },
@@ -22,7 +20,6 @@ export const todoSlice = createSlice({
       const newItem = {
         id: Date.now(),
         title: action.payload,
-        completed: false,
       };
       state.items.push(newItem);
     },

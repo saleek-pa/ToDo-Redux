@@ -71,6 +71,7 @@ section {
 .todos {
   width: 100%;
   height: 400px;
+  overflow-y: auto;
   margin-top: 50px;
   padding: 10px 5px;
   position: relative;
