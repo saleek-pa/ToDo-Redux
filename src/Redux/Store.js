@@ -7,10 +7,12 @@ export const todoSlice = createSlice({
       {
         id: 1,
         title: "Task 1",
+        completed: false,
       },
       {
         id: 2,
         title: "Task 2",
+        completed: false,
       },
     ],
   },
@@ -20,6 +22,7 @@ export const todoSlice = createSlice({
       const newItem = {
         id: Date.now(),
         title: action.payload,
+        completed: false,
       };
       state.items.push(newItem);
     },
@@ -34,10 +37,16 @@ export const todoSlice = createSlice({
       const newItems = state.items.filter((item) => item.id !== action.payload);
       state.items = newItems;
     },
+
+    handleStatus: (state, action) => {
+      const editStatus = state.items.find((item) => item.id === action.payload);
+      editStatus.completed = !editStatus.completed;
+    },
   },
 });
 
-export const { addItem, editItem, deleteItem } = todoSlice.actions;
+export const { addItem, editItem, deleteItem, handleStatus } =
+  todoSlice.actions;
 
 export const store = configureStore({
   reducer: {
