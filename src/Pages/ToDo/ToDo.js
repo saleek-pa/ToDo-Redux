@@ -1,19 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addItem, editItem, deleteItem, handleStatus } from "../Redux/Store";
-import { SVG } from "./Elements";
+import { addItem, editItem, deleteItem, handleStatus } from "../../Redux/Store";
+import { SvgIcon } from "../../Components/SvgIcon";
 import "./ToDo.css";
 
 export default function ToDo() {
   const editInputRef = useRef(null);
   const [editItemId, setEditItemId] = useState(null);
   const [showAnimation, setShowAnimation] = useState(false);
+  //Slide-Down animation when adding new items
 
   const items = useSelector((state) => state.todo.items);
   const activeItems = items.filter((item) => item.completed === false);
   const completedItems = items.filter((item) => item.completed === true);
   const dispatch = useDispatch();
 
+  //Add New Items
   const handleSubmit = (e) => {
     e.preventDefault();
     const newItem = e.target.item.value.trim();
@@ -23,6 +25,34 @@ export default function ToDo() {
       e.target.reset();
     } else {
       e.target.reset();
+    }
+  };
+
+  const handleTaskClick = (e, task) => {
+    const targetClass = e.target.className;
+
+    //Checks whether the variable targetClass is a string
+    //if it's undefined or of another data type, the code block will be skipped.
+    if (typeof targetClass === "string") {
+      if (targetClass.includes("fa-pen")) { //Edit
+        setEditItemId(task.id);
+      } else if (targetClass.includes("fa-check")) { //Save
+        if (editInputRef.current.value.trim() !== "") {
+          dispatch(
+            editItem({
+              id: task.id,
+              title: editInputRef.current.value.trim(),
+            })
+          );
+          setEditItemId(null);
+        } else {
+          dispatch(deleteItem(task.id));
+        }
+      } else if (targetClass.includes("fa-trash")) { //Delete
+        dispatch(deleteItem(task.id));
+      } else if (e.target.type === "checkbox") { //Checkbox
+        setTimeout(() => dispatch(handleStatus(task.id)), 500);
+      }
     }
   };
 
@@ -45,40 +75,25 @@ export default function ToDo() {
 
         <div className="todos">
           <ul className="todo-list">
-
-            {[...activeItems].reverse().map((task) => ( // Add task on top
+            {[...activeItems].reverse().map((task) => ( //Add task on top
               <li
                 key={task.id}
                 className={`task ${showAnimation ? "slide-down" : ""}`}
+                onClick={(e) => handleTaskClick(e, task)}
               >
-
                 {/* It checks the id passed from edit icon and current task are equal or not */}
                 {editItemId !== task.id ? (
                   <>
                     <label className="container">
-                      <input
-                        type="checkbox"
-                        onChange={() => {
-                          setTimeout(
-                            () => dispatch(handleStatus(task.id)),
-                            500
-                          );
-                        }}
-                      />
-                      <SVG />
+                      <input type="checkbox" />
+                      <SvgIcon />
                       <span className="todo-text">{task.title}</span>
                     </label>
 
-                    <span
-                      className="span-button"
-                      onClick={() => setEditItemId(task.id)}
-                    >
+                    <span className="span-button">
                       <i className="fa-solid fa-pen"></i>
                     </span>
-                    <span
-                      className="span-button"
-                      onClick={() => dispatch(deleteItem(task.id))}
-                    >
+                    <span className="span-button">
                       <i className="fa-solid fa-trash"></i>
                     </span>
                   </>
@@ -86,7 +101,7 @@ export default function ToDo() {
                   <>
                     <label className="container">
                       <input type="checkbox" />
-                      <SVG />
+                      <SvgIcon />
                       <input
                         type="text"
                         defaultValue={task.title}
@@ -95,28 +110,10 @@ export default function ToDo() {
                       />
                     </label>
 
-                    <span
-                      className="span-button"
-                      onClick={() => {
-                        if (editInputRef.current.value.trim() !== "") {
-                          dispatch(
-                            editItem({
-                              id: task.id,
-                              title: editInputRef.current.value.trim(),
-                            })
-                          );
-                          setEditItemId(null);
-                        } else {
-                          dispatch(deleteItem(task.id));
-                        }
-                      }}
-                    >
+                    <span className="span-button">
                       <i className="fa-solid fa-check"></i>
                     </span>
-                    <span
-                      className="span-button"
-                      onClick={() => dispatch(deleteItem(task.id))}
-                    >
+                    <span className="span-button">
                       <i className="fa-solid fa-trash"></i>
                     </span>
                   </>
@@ -133,34 +130,20 @@ export default function ToDo() {
                   <li
                     key={task.id}
                     className={`task ${showAnimation ? "slide-down" : ""}`}
+                    onClick={(e) => handleTaskClick(e, task)}
                   >
                     {/* It checks the id passed from edit icon and current task are equal or not */}
                     {editItemId !== task.id ? (
                       <>
                         <label className="container">
-                          <input
-                            type="checkbox"
-                            defaultChecked
-                            onChange={() => {
-                              setTimeout(
-                                () => dispatch(handleStatus(task.id)),
-                                500
-                              );
-                            }}
-                          />
-                          <SVG />
+                          <input type="checkbox" defaultChecked />
+                          <SvgIcon />
                           <span className="todo-text">{task.title}</span>
                         </label>
-                        <span
-                          className="span-button"
-                          onClick={() => setEditItemId(task.id)}
-                        >
+                        <span className="span-button">
                           <i className="fa-solid fa-pen"></i>
                         </span>
-                        <span
-                          className="span-button"
-                          onClick={() => dispatch(deleteItem(task.id))}
-                        >
+                        <span className="span-button">
                           <i className="fa-solid fa-trash"></i>
                         </span>
                       </>
@@ -168,7 +151,7 @@ export default function ToDo() {
                       <>
                         <label className="container">
                           <input type="checkbox" />
-                          <SVG />
+                          <SvgIcon />
 
                           <input
                             type="text"
@@ -177,28 +160,10 @@ export default function ToDo() {
                             ref={editInputRef}
                           />
                         </label>
-                        <span
-                          className="span-button"
-                          onClick={() => {
-                            if (editInputRef.current.value.trim() !== "") {
-                              dispatch(
-                                editItem({
-                                  id: task.id,
-                                  title: editInputRef.current.value.trim(),
-                                })
-                              );
-                              setEditItemId(null);
-                            } else {
-                              dispatch(deleteItem(task.id));
-                            }
-                          }}
-                        >
+                        <span className="span-button">
                           <i className="fa-solid fa-check"></i>
                         </span>
-                        <span
-                          className="span-button"
-                          onClick={() => dispatch(deleteItem(task.id))}
-                        >
+                        <span className="span-button">
                           <i className="fa-solid fa-trash"></i>
                         </span>
                       </>

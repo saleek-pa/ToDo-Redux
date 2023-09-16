@@ -1,6 +1,6 @@
 import React from "react";
 
-export const SVG = () => {
+export const SvgIcon = () => {
   return (
     <svg viewBox="0 0 64 64" height="2em" width="2em">
       <path

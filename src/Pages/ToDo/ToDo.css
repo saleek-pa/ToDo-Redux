@@ -66,6 +66,7 @@ section {
   margin-left: 8px;
   display: inline !important;
   background-color: #343434;
+  transition: background-color 0.3s ease;
 }
 
 .todos {
@@ -99,6 +100,10 @@ section {
 
 .todo-list li:hover {
   background-color: #343434;
+}
+
+.todo-list li:not(:hover) .edit-input {
+  background-color: rgb(38 37 37); /* Background color when not hovering over li */
 }
 
 .todo-list li span {
